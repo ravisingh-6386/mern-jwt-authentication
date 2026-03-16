@@ -1,89 +1,89 @@
-# Full Stack Authentication App
+# MERN JWT Authentication
 
-A complete JWT-based authentication app with **React** frontend and **Node.js/Express** backend.
+Full stack authentication app built with React, Node.js, Express, MongoDB, and JWT. It includes signup, login, protected routes, persistent auth state, and a light/dark mode UI.
+
+## Features
+
+- User signup with hashed passwords via `bcryptjs`
+- User login with JWT token generation
+- Protected frontend routing for authenticated users only
+- Protected backend routes with JWT verification middleware
+- Persistent login state using `localStorage`
+- Light and dark mode toggle with saved preference
 
 ## Tech Stack
 
-| Layer    | Technology                                        |
-|----------|---------------------------------------------------|
-| Frontend | React 18, Vite, React Router v6, Axios            |
-| Backend  | Node.js, Express, Mongoose, bcryptjs, jsonwebtoken|
-| Database | MongoDB                                           |
-| Auth     | JWT (JSON Web Tokens)                             |
-
----
-
-## Features
-- **Signup** — register with name, email & password (hashed with bcrypt)
-- **Login** — validate credentials and receive a JWT
-- **JWT Auth** — token stored in `localStorage`, sent in every request header
-- **Protected Routes** — `/dashboard` only accessible when authenticated
-- **Persistent Sessions** — token re-validated on page refresh
-
----
+| Layer | Stack |
+| --- | --- |
+| Frontend | React, Vite, React Router, Axios |
+| Backend | Node.js, Express |
+| Database | MongoDB with Mongoose |
+| Auth | JWT, bcryptjs |
 
 ## Project Structure
 
-```
+```text
 Full Stack Authentication App/
-├── backend/
-│   ├── config/db.js          # MongoDB connection
-│   ├── middleware/auth.js     # JWT verification middleware
-│   ├── models/User.js         # Mongoose User model
-│   ├── routes/auth.js         # /signup  /login  /me
-│   ├── routes/protected.js    # /dashboard (JWT-protected)
-│   ├── server.js              # Express app entry point
-│   ├── .env                   # Environment variables
-│   └── package.json
-└── frontend/
-    └── src/
-        ├── context/AuthContext.jsx   # Global auth state
-        ├── components/
-        │   ├── Navbar.jsx
-        │   └── PrivateRoute.jsx
-        ├── pages/
-        │   ├── Login.jsx
-        │   ├── Signup.jsx
-        │   └── Dashboard.jsx
-        ├── App.jsx
-        └── App.css
+|- backend/
+|  |- config/db.js
+|  |- middleware/auth.js
+|  |- models/User.js
+|  |- routes/auth.js
+|  |- routes/protected.js
+|  |- .env.example
+|  |- package.json
+|  `- server.js
+|- frontend/
+|  |- src/
+|  |  |- components/
+|  |  |- context/
+|  |  |- pages/
+|  |  |- App.jsx
+|  |  |- App.css
+|  |  `- main.jsx
+|  `- package.json
+|- .gitignore
+`- README.md
 ```
 
----
-
-## Setup & Run
+## Local Setup
 
 ### Prerequisites
-- [Node.js](https://nodejs.org/) v18+
-- [MongoDB](https://www.mongodb.com/try/download/community) running locally **or** a [MongoDB Atlas](https://www.mongodb.com/atlas) connection string
 
----
+- Node.js 18 or newer
+- MongoDB running locally, or a MongoDB Atlas connection string
 
-### 1. Backend
+### 1. Configure the backend
+
+Create `backend/.env` using `backend/.env.example`.
+
+```env
+PORT=5000
+MONGO_URI=mongodb://localhost:27017/fullstack_auth
+JWT_SECRET=replace_with_a_secure_random_secret
+JWT_EXPIRE=7d
+```
+
+### 2. Install dependencies
 
 ```bash
 cd backend
-# (dependencies already installed)
-# Edit .env if needed (MONGO_URI, JWT_SECRET)
-npm run dev       # development with nodemon
-# or
-npm start         # production
+npm install
+
+cd ../frontend
+npm install
 ```
 
-The API will be available at `http://localhost:5000`.
+### 3. Start the app
 
-#### API Endpoints
+Backend:
 
-| Method | Endpoint                   | Auth | Description               |
-|--------|----------------------------|------|---------------------------|
-| POST   | /api/auth/signup           | ✗    | Register new user         |
-| POST   | /api/auth/login            | ✗    | Login & get JWT token     |
-| GET    | /api/auth/me               | ✓    | Get current user profile  |
-| GET    | /api/protected/dashboard   | ✓    | Protected dashboard data  |
+```bash
+cd backend
+npm run dev
+```
 
----
-
-### 2. Frontend
+Frontend:
 
 ```bash
 cd frontend
@@ -92,41 +92,28 @@ npm run dev
 
 Open `http://localhost:5173` in your browser.
 
----
+## API Endpoints
 
-### 3. Environment Variables (backend `.env`)
+| Method | Route | Auth Required | Purpose |
+| --- | --- | --- | --- |
+| POST | `/api/auth/signup` | No | Register a new user |
+| POST | `/api/auth/login` | No | Login and receive a JWT |
+| GET | `/api/auth/me` | Yes | Fetch the current user |
+| GET | `/api/protected/dashboard` | Yes | Fetch protected dashboard data |
 
-```env
-PORT=5000
-MONGO_URI=mongodb://localhost:27017/fullstack_auth
-JWT_SECRET=super_secret_jwt_key_change_this_in_production_2024
-JWT_EXPIRE=7d
-```
+## JWT Flow
 
-> **Security note:** Change `JWT_SECRET` to a long, random string before deploying to production.
-
----
-
-## How JWT Auth Works
-
-```
+```text
 User submits credentials
-       │
-       ▼
-Server validates → bcrypt.compare(password)
-       │
-       ▼
-Server signs JWT (jwt.sign) with secret key
-       │
-       ▼
-Token returned to client → stored in localStorage
-       │
-       ▼
-Client sends token in header: Authorization: Bearer <token>
-       │
-       ▼
-Server middleware verifies token on every protected request
-       │
-       ▼
-Access granted / denied
+-> Server validates credentials
+-> Server signs a JWT
+-> Client stores the token in localStorage
+-> Client sends Authorization: Bearer <token>
+-> Backend verifies token before serving protected data
 ```
+
+## Notes
+
+- `backend/.env` is ignored by Git and should never be committed.
+- `node_modules` folders are ignored.
+- Update `JWT_SECRET` before deploying the backend.

@@ -11,27 +11,27 @@ import './App.css';
 function App() {
   return (
     <ThemeProvider>
-    <AuthProvider>
-      <Router>
-        <Navbar />
-        <main className="main-content">
-          <Routes>
-            <Route path="/"          element={<Navigate to="/dashboard" replace />} />
-            <Route path="/login"     element={<Login />} />
-            <Route path="/signup"    element={<Signup />} />
-            <Route
-              path="/dashboard"
-              element={
-                <PrivateRoute>
-                  <Dashboard />
-                </PrivateRoute>
-              }
-            />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </main>
-      </Router>
-    </AuthProvider>
+      <AuthProvider>
+        <Router>
+          <Navbar />
+          <main className="main-content">
+            <Routes>
+              <Route path="/" element={<Navigate to="/dashboard" replace />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route
+                path="/dashboard"
+                element={
+                  <PrivateRoute>
+                    <Dashboard />
+                  </PrivateRoute>
+                }
+              />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </main>
+        </Router>
+      </AuthProvider>
     </ThemeProvider>
   );
 }
